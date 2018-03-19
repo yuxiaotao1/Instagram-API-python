@@ -6,6 +6,7 @@ import time, json
 
 # get proxy
 def get_proxy():
+        return "http://127.0.0.1:6152"
         count = 5
         lastRes = ""
         while(count > 0):

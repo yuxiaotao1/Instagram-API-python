@@ -165,6 +165,23 @@ class InstagramAPI:
                 self.expose()
         return False
 
+    def uploadProfilePic(self, photo):
+        file={'profile_pic':('profilepic.jpg', open(photo,'rb'), 'image/jpeg')}
+        m = MultipartEncoder(file, boundary=self.uuid)
+        self.s.headers.update({'X-IG-Capabilities': '3Q4=',
+                               'X-IG-Connection-Type': 'WIFI',
+                               'Cookie2': '$Version=1',
+                               'Accept-Language': 'en-US',
+                               'Accept-Encoding': 'gzip, deflate',
+                               'Content-type': m.content_type,
+                               'Connection': 'close',
+                               'User-Agent': self.USER_AGENT})
+        response = self.s.post("https://www.instagram.com/accounts/web_change_profile_picture/", data=m.to_string())
+        print(response)
+        if response.status_code == 200:
+            return True
+        return False
+
     def uploadVideo(self, video, thumbnail, caption=None, upload_id=None, is_sidecar=None):
         if upload_id is None:
             upload_id = str(int(time.time() * 1000))
