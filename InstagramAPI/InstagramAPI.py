@@ -81,13 +81,14 @@ class InstagramAPI:
 
         if proxy is not None:
             print('Set proxy!')
-            proxies = {'http': 'http://' + proxy, 'https': 'http://' + proxy}
+            proxies = {'http': proxy, 'https':  proxy}
             self.s.proxies.update(proxies)
 
     def login(self, force=False):
         if (not self.isLoggedIn or force):
+            print("login 1")
             if (self.SendRequest('si/fetch_headers/?challenge_type=signup&guid=' + self.generateUUID(False), None, True)):
-
+                print("login 2")
                 data = {'phone_id': self.generateUUID(True),
                         '_csrftoken': self.LastResponse.cookies['csrftoken'],
                         'username': self.username,
@@ -97,6 +98,7 @@ class InstagramAPI:
                         'login_attempt_count': '0'}
 
                 if (self.SendRequest('accounts/login/', self.generateSignature(json.dumps(data)), True)):
+                    print("login 3")
                     self.isLoggedIn = True
                     self.username_id = self.LastJson["logged_in_user"]["pk"]
                     self.rank_token = "%s_%s" % (self.username_id, self.uuid)
@@ -842,7 +844,7 @@ class InstagramAPI:
 
     def SendRequest(self, endpoint, post=None, login=False):
         verify = False  # don't show request warning
-
+        print("Request now!")
         if (not self.isLoggedIn and not login):
             raise Exception("Not logged in!\n")
 
@@ -852,9 +854,12 @@ class InstagramAPI:
                                'Cookie2': '$Version=1',
                                'Accept-Language': 'en-US',
                                'User-Agent': self.USER_AGENT})
-
         while True:
             try:
+                # testUrl='https://api.ipify.org?format=json'
+                #testRes=self.s.get(testUrl, verify=True)
+                #testDic=json.loads(testRes.text)
+                #print(testDic["ip"])
                 if (post is not None):
                     response = self.s.post(self.API_URL + endpoint, data=post, verify=verify)
                 else:
